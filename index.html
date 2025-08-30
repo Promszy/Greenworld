@@ -4,121 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>greenworldinvestment.io</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-    <header>
-        <nav>
-            <div class="logo">greenworldinvestment.io</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#rewards">Rewards</a></li>
-                <li><a href="#deposit">Deposit</a></li>
-                <li><a href="#withdrawal">Withdrawal</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main id="home" class="page-section active">
-        <section class="product-section">
-            <h1>Our Products</h1>
-            <div class="product-grid">
-                <div class="product-card" data-price="9.50">
-                    <h3>Product A</h3>
-                    <p class="price">$9.50</p>
-                    <p class="points-reward">Earn 3 points</p>
-                    <button class="purchase-btn">Purchase</button>
-                </div>
-                <div class="product-card" data-price="5.20">
-                    <h3>Product B</h3>
-                    <p class="price">$5.20</p>
-                    <p class="points-reward">Earn 2 points</p>
-                    <button class="purchase-btn">Purchase</button>
-                </div>
-                <div class="product-card" data-price="2.00">
-                    <h3>Product C</h3>
-                    <p class="price">$2.00</p>
-                    <p class="points-reward">Earn 1 point</p>
-                    <button class="purchase-btn">Purchase</button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <main id="dashboard" class="page-section">
-        <section class="dashboard-content">
-            <div class="time-travel-bg"></div>
-            <h1>Your Dashboard</h1>
-            <div class="dashboard-stats">
-                <div class="stat-card">
-                    <h3>Total Points</h3>
-                    <p id="total-points">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Daily Point Timer</h3>
-                    <p id="timer">Loading...</p>
-                </div>
-            </div>
-            <canvas id="pointsChart"></canvas>
-            <button id="collect-daily-points-btn">Collect Daily Point</button>
-        </section>
-    </main>
     
-    <main id="rewards" class="page-section">
-        <section class="rewards-content">
-            <h1>Point Conversion</h1>
-            <div class="conversion-form">
-                <p>Convert your points to other rewards!</p>
-                <input type="number" id="points-to-convert" placeholder="Enter points to convert">
-                <button id="convert-btn">Convert</button>
-                <p id="conversion-result"></p>
-            </div>
-        </section>
-    </main>
+    <style>
+        /* CSS for all pages */
+        :root {
+            --bg-color: #f4f7f9;
+            --primary-color: #28a745;
+            --accent-color: #007bff;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
 
-    <main id="deposit" class="page-section">
-        <section class="deposit-content">
-            <h1>Deposit Funds</h1>
-            <p>This is a placeholder for your secure deposit panel.</p>
-            <div class="history-panel">
-                <h3>Deposit History</h3>
-                <ul id="deposit-history"></ul>
-            </div>
-        </section>
-    </main>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
 
-    <main id="withdrawal" class="page-section">
-        <section class="withdrawal-content">
-            <h1>Withdraw Funds</h1>
-            <p>This is a placeholder for your secure withdrawal panel.</p>
-            <div class="history-panel">
-                <h3>Withdrawal History</h3>
-                <ul id="withdrawal-history"></ul>
-            </div>
-        </section>
-    </main>
+        /* --- Hamburger Menu Icon --- */
+        .menu-icon {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 10px;
+        }
 
-    <main id="contact" class="page-section">
-        <section class="contact-content">
-            <h1>Contact Us</h1>
-            <p>This is a placeholder for your contact information or form.</p>
-        </section>
-    </main>
+        .menu-icon .bar {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color);
+            transition: all 0.3s ease;
+        }
 
-    <script src="script.js"></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>greenworldinvestment.io</title>
-    <link rel="stylesheet" href="style.css">
+        /* --- Sidebar Menu --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            z-index: 1500;
+            padding-top: 80px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-menu li a:hover {
+            background-color: var(--light-color);
+        }
+
+        /* --- Page Sections --- */
+        .page-section {
+            display: none;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .content-wrapper {
+            transition: margin-left 0.3s ease;
+        }
+
+        /* --- Product Section --- */
+        .product-section {
+            text-align: center;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .product-card h3 {
+            color: var(--primary-color);
+        }
+
+        .purchase-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* --- Dashboard Section --- */
+        .dashboard-content {
+            position: relative;
+            text-align: center;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        /* Time traveler effect */
+        .time-travel-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(2,0,36,0) 0%, rgba(2,0,36,0.8) 100%), 
+                        repeating-linear-gradient(45deg, #0a0e14 0, #0a0e14 5px, transparent 5px, transparent 10px),
+                        repeating-linear-gradient(-45deg, #0a0e14 0, #0a0e14 5px, transparent 5px, transparent 10px);
+            background-size: 20px 20px;
+            animation: travelEffect 120s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes travelEffect {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 100% 100%;
+            }
+        }
+        
+        .dashboard-content h1, .dashboard-stats {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 1rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        /* History Panels */
+        .history-panel {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
 
@@ -140,14 +221,52 @@
     </aside>
 
     <main class="content-wrapper">
-        <main id="home" class="page-section active">
-            </main>
+        <section id="home" class="page-section active">
+            <div class="product-section">
+                <h1>Our Products</h1>
+                <div class="product-grid">
+                    <div class="product-card" data-price="9.50">
+                        <h3>Product A</h3>
+                        <p class="price">$9.50</p>
+                        <p class="points-reward">Earn 3 points</p>
+                        <button class="purchase-btn">Purchase</button>
+                    </div>
+                    <div class="product-card" data-price="5.20">
+                        <h3>Product B</h3>
+                        <p class="price">$5.20</p>
+                        <p class="points-reward">Earn 2 points</p>
+                        <button class="purchase-btn">Purchase</button>
+                    </div>
+                    <div class="product-card" data-price="2.00">
+                        <h3>Product C</h3>
+                        <p class="price">$2.00</p>
+                        <p class="points-reward">Earn 1 point</p>
+                        <button class="purchase-btn">Purchase</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <main id="dashboard" class="page-section">
-            </main>
+        <section id="dashboard" class="page-section">
+            <div class="dashboard-content">
+                <div class="time-travel-bg"></div>
+                <h1>Your Dashboard</h1>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Total Points</h3>
+                        <p id="total-points">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Daily Point Timer</h3>
+                        <p id="timer">Loading...</p>
+                    </div>
+                </div>
+                <button id="collect-daily-points-btn">Collect Daily Point</button>
+            </div>
+        </section>
         
-        <main id="withdrawal" class="page-section">
-            <section class="withdrawal-content">
+        <section id="withdrawal" class="page-section">
+            <div class="withdrawal-content">
                 <h1>Withdrawal</h1>
                 <p>This is a placeholder for your secure withdrawal panel.</p>
                 <div class="history-panel">
@@ -157,11 +276,11 @@
                         <li>$15.00 - Nov 10, 2024</li>
                     </ul>
                 </div>
-            </section>
-        </main>
+            </div>
+        </section>
 
-        <main id="deposit" class="page-section">
-            <section class="deposit-content">
+        <section id="deposit" class="page-section">
+            <div class="deposit-content">
                 <h1>Deposit</h1>
                 <p>This is a placeholder for your secure deposit panel.</p>
                 <div class="history-panel">
@@ -171,17 +290,122 @@
                         <li>$25.00 - Nov 9, 2024</li>
                     </ul>
                 </div>
-            </section>
-        </main>
-
-        <main id="service-care" class="page-section">
-            <section class="service-care-content">
+            </div>
+        </section>
+        
+        <section id="service-care" class="page-section">
+            <div class="service-care-content">
                 <h1>Service Care</h1>
                 <p>Contact our customer support team here.</p>
-            </section>
-        </main>
+            </div>
+        </section>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        // JavaScript for all functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Sidebar Menu Logic ---
+            const menuIcon = document.getElementById('menu-icon');
+            const sidebar = document.getElementById('sidebar');
+            const navLinks = document.querySelectorAll('.sidebar-menu a');
+
+            menuIcon.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                });
+            });
+
+            // --- Page Navigation ---
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = e.target.getAttribute('href');
+                    
+                    document.querySelectorAll('.page-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    document.querySelector(targetId).classList.add('active');
+                });
+            });
+
+            // --- Logout Logic ---
+            const logoutBtn = document.getElementById('logout-btn');
+
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('You have been logged out.');
+                window.location.href = '#home';
+            });
+            
+            // --- Points Logic (Client-side simulation) ---
+            const totalPointsDisplay = document.getElementById('total-points');
+            let totalPoints = 0;
+
+            if (localStorage.getItem('totalPoints')) {
+                totalPoints = parseInt(localStorage.getItem('totalPoints'));
+            }
+            totalPointsDisplay.textContent = totalPoints;
+
+            const getPointsByPrice = (price) => {
+                if (price >= 1 && price <= 3) return 1;
+                if (price > 3 && price <= 7) return 2;
+                if (price > 7 && price <= 12) return 3;
+                return 0;
+            };
+
+            const purchaseButtons = document.querySelectorAll('.purchase-btn');
+            purchaseButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productCard = e.target.closest('.product-card');
+                    const price = parseFloat(productCard.dataset.price);
+                    const pointsToAdd = getPointsByPrice(price);
+                    
+                    totalPoints += pointsToAdd;
+                    totalPointsDisplay.textContent = totalPoints;
+                    localStorage.setItem('totalPoints', totalPoints);
+                    alert(`You purchased a product and earned ${pointsToAdd} points!`);
+                });
+            });
+
+            // --- Daily Point Timer ---
+            const timerDisplay = document.getElementById('timer');
+            const collectDailyPointsBtn = document.getElementById('collect-daily-points-btn');
+            let lastCollectionTime = localStorage.getItem('lastCollectionTime');
+
+            const updateTimer = () => {
+                const now = new Date();
+                const nextDayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 1, 0, 0));
+                const timeRemaining = nextDayUTC - now;
+
+                if (timeRemaining <= 0) {
+                    timerDisplay.textContent = "Ready to Collect!";
+                    collectDailyPointsBtn.disabled = false;
+                } else {
+                    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    timerDisplay.textContent = `${hours}h ${minutes}m ${seconds}s`;
+                    collectDailyPointsBtn.disabled = true;
+                }
+            };
+            
+            setInterval(updateTimer, 1000);
+
+            // --- Daily Point Collection ---
+            collectDailyPointsBtn.addEventListener('click', () => {
+                totalPoints += 1;
+                totalPointsDisplay.textContent = totalPoints;
+                localStorage.setItem('totalPoints', totalPoints);
+                localStorage.setItem('lastCollectionTime', new Date().toISOString());
+                alert('Daily point collected!');
+                updateTimer();
+            });
+        });
+    </script>
 </body>
 </html>
